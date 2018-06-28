@@ -255,7 +255,7 @@ namespace {
 				double nuclear_fric;
 				int Ndtq;
                 const double thermal_tau, thermal_tau_inv;
-                int hop_count;
+                uint64_t hop_count;
 		};
 
 };
