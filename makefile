@@ -1,4 +1,3 @@
-CXX = icpc
 INC += -I./dynamics_headers
 OPT += -O3 -std=c++11
 
@@ -27,30 +26,7 @@ MPIINC += -I$(MPIHOME)/include
 
 
 default: mpi
-serial: cme bcme modbcme fp bfp iesh
 mpi: cme_mpi bcme_mpi modbcme_mpi fp_mpi bfp_mpi iesh_mpi
-
-cme: runCME.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
-bcme: runBCME.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
-modbcme: runModBCME.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
-fp: runFP.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
-bfp: runBFP.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
-iesh: runIESH.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
-showsurf: showsurf.cpp config.hpp
-	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
-
 
 cme_mpi: runCME_mpi.cpp config.hpp
 	$(MPICXX) $< $(INC) $(MPIINC) $(LIBS) $(MPILIBS) $(OPT) -o bin/$@
@@ -72,3 +48,6 @@ iesh_mpi: runIESH_mpi.cpp config.hpp
 
 test: test.cpp 
 	$(MPICXX) $< $(INC) $(MPIINC) $(LIBS) $(MPILIBS) $(OPT) -o bin/$@
+
+showsurf: showsurf.cpp config.hpp
+	$(MPICXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@

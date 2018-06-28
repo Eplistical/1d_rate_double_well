@@ -22,7 +22,7 @@ struct Para {
 
     const double dt = 1.0;
     const int Ndtq = 1;
-    const size_t Nstep = 1e5;
+    const size_t Nstep = 1e4;
     const size_t Anastep = 200;
     const int Ntraj = 100;
 
@@ -33,7 +33,7 @@ struct Para {
     const double avgx0 = 0;
     const int surf0 = 0;
 
-    const std::string workdir = ".";
+    std::string workdir;
 } para;
 
 inline void saveParatoh5(ioer::h5file_t& h5f) {

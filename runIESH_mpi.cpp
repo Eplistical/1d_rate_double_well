@@ -3,7 +3,6 @@
 #include <memory>
 #include <algorithm>
 #include <string>
-#include <stdlib>
 
 #include "misc/vector.hpp"
 #include "misc/ioer.hpp"
@@ -13,6 +12,7 @@
 
 #include "config.hpp"
 #include "loadinit.hpp"
+#include "argparse.hpp"
 #include "hamiltonian_1d/impurity_near_uniform_band_hamiltonian.hpp"
 #include "particle_1d/iesh_particle_1d.hpp"
 
@@ -25,14 +25,17 @@ using std::vector;
 int main(int argc, char** argv) 
 {
     MPIer::setup();
-    string START_TIME;
 
+    // parse args
+    if (argparse(argc, argv, para.workdir) == false) 
+        return 0;
+
+    // setup
+    string START_TIME;
     if (MPIer::master) {
         START_TIME = timer::now();
         timer::tic();
     }
-
-    // setup
     randomer::seed(MPIer::assign_random_seed(para.random_seed));
     const int Nele(static_cast<int>(para.Nbath / 2));
     const int Nhole(Nele + 1);
@@ -109,7 +112,7 @@ int main(int argc, char** argv)
 
     // output
     if (MPIer::master) {
-        string outfile_fullpath(para.workdir + "/iesh_mpi.out");
+        string outfile_fullpath = para.workdir + "/iesh_mpi.out";
         ioer::info("outfile: ", outfile_fullpath);
         ioer::output_t out(outfile_fullpath);
         out.set_precision(10);

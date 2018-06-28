@@ -11,6 +11,7 @@
 
 #include "config.hpp"
 #include "loadinit.hpp"
+#include "argparse.hpp"
 #include "hamiltonian_1d/impurity_near_uniform_band_hamiltonian.hpp"
 #include "particle_1d/iesh_particle_1d.hpp"
 

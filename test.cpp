@@ -13,6 +13,7 @@
 
 #include "config.hpp"
 #include "loadinit.hpp"
+#include "argparse.hpp"
 #include "particle_1d/cme_particle_1d.hpp"
 
 #include "boost/program_options.hpp"

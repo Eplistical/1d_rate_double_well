@@ -12,25 +12,28 @@
 
 #include "config.hpp"
 #include "loadinit.hpp"
+#include "argparse.hpp"
 #include "particle_1d/bcme_particle_1d.hpp"
 
 using ptcl_t = BCME_Particle_1D<potential_t, inttable_mgr_t>;
 
 using std::string;
 using std::vector;
-std::string outfile = "bcme_mpi.out";
 
 int main(int argc, char** argv) 
 {
     MPIer::setup();
-    string START_TIME;
 
+    // parse args
+    if (argparse(argc, argv, para.workdir) == false) 
+        return 0;
+
+    // setup
+    string START_TIME;
     if (MPIer::master) {
         START_TIME = timer::now();
         timer::tic();
     }
-
-    // setup
     randomer::seed(MPIer::assign_random_seed(para.random_seed));
     potential_t potential(para.mass, para.omega, para.g, para.dG, para.gamma0);
     inttable_mgr_t inttable_mgr("inttable.hdf5", potential);
@@ -93,7 +96,9 @@ int main(int argc, char** argv)
 
     // output
     if (MPIer::master) {
-        ioer::output_t out(outfile);
+        string outfile_fullpath = para.workdir + "/bcme_mpi.out";
+        ioer::info("outfile: ", outfile_fullpath);
+        ioer::output_t out(outfile_fullpath);
         out.set_precision(10);
         out.set_width(20);
         out.info("# ", START_TIME);
