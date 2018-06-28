@@ -126,15 +126,13 @@ int main(int argc, char** argv)
         h5f.create_dataset(
                 "t", tarr,
                 "N0", 1.0 - sumN / para.Ntraj,
-                "Ek", sumEk / para.Ntraj / para.kT
-                /*
+                "Ek", sumEk / para.Ntraj / para.kT,
                 "x", sumx / para.Ntraj,
                 "v", sumv / para.Ntraj,
                 "nu_Ep", sumnu_Ep / para.Ntraj / para.kT,
                 "el_Ep", sumel_Ep / para.Ntraj / para.kT,
                 "Ep", (sumnu_Ep + sumel_Ep) / para.Ntraj / para.kT,
                 "Etot", (sumEk + sumnu_Ep + sumel_Ep) / para.Ntraj / para.kT
-                */
                 );
         h5f.create_attr("para", 
                 "MPI_size", MPIer::size,
