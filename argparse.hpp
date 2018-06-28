@@ -7,7 +7,7 @@
 
 namespace po = boost::program_options;
 
-inline bool argparse(int argc, char** argv, 
+inline bool argparse(bool output_flag, int argc, char** argv, 
                 std::string& workdir) 
 {
     po::options_description desc("Allowed options");
@@ -20,7 +20,8 @@ inline bool argparse(int argc, char** argv,
     po::notify(vm);    
 
     if (vm.count("help")) {
-        std::cout << desc << "\n";
+        if (output_flag)
+            std::cout << desc << "\n";
         return false;
     }
 

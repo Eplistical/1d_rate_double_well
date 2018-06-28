@@ -25,7 +25,7 @@ int main(int argc, char** argv)
     MPIer::setup();
 
     // parse args
-    if (argparse(argc, argv, para.workdir) == false) {
+    if (argparse(MPIer::master, argc, argv, para.workdir) == false) {
         MPIer::finalize(); 
         return 0;
     }
