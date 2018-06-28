@@ -99,7 +99,7 @@ int main(int argc, char** argv)
                 *it = *it + buf;
             }
 
-            int ibuf;
+            uint64_t ibuf;
             MPIer::recv(r, ibuf);
             hop_count += ibuf;
         }
@@ -114,31 +114,36 @@ int main(int argc, char** argv)
 
     // output
     if (MPIer::master) {
-        string outfile_fullpath = para.workdir + "/iesh_mpi.out";
-        ioer::info("outfile: ", outfile_fullpath);
-        ioer::output_t out(outfile_fullpath);
-        out.set_precision(10);
-        out.set_width(20);
-        out.info("# ", START_TIME);
-
-        out.tabout("# t", "1 - N0", "x", "v", "Ek/kT", "nu_Ep/kT", "el_Ep/kT", "Ep/kT", "Etot/kT");
-        for (int i(0); i < Nrecord; ++i) {
-            out.tabout( i * para.Anastep * para.dt, 
-                    1.0 - sumN[i] / para.Ntraj,
-                    sumx[i] / para.Ntraj,
-                    sumv[i] / para.Ntraj,
-                    sumEk[i] / para.Ntraj / para.kT,
-                    sumnu_Ep[i] / para.Ntraj / para.kT,
-                    sumel_Ep[i] / para.Ntraj / para.kT,
-                    (sumnu_Ep[i] + sumel_Ep[i]) / para.Ntraj / para.kT,
-                    (sumEk[i] + sumnu_Ep[i] + sumel_Ep[i]) / para.Ntraj / para.kT
-                    );
+        vector<double> tarr(Nrecord, 0.0);
+        for (int irecord(0); irecord < Nrecord; ++irecord) {
+            tarr[irecord] = irecord * para.Anastep * para.dt; 
         }
-        out.info("# hop_count: ", hop_count);
-        out.info("# MPI_size: ", MPIer::size);
-        out.info("# ", timer::toc());
-        out.info("# ", timer::now());
-        out.close();
+
+        string outfile_fullpath = para.workdir + "/iesh_mpi.h5";
+        ioer::info("outfile: ", outfile_fullpath);
+        ioer::h5file_t h5f(outfile_fullpath, std::ios::out);
+        saveParatoh5(h5f);
+        h5f.create_dataset(
+                "t", tarr,
+                "N0", 1.0 - sumN / para.Ntraj,
+                "Ek", sumEk / para.Ntraj / para.kT
+                /*
+                "x", sumx / para.Ntraj,
+                "v", sumv / para.Ntraj,
+                "nu_Ep", sumnu_Ep / para.Ntraj / para.kT,
+                "el_Ep", sumel_Ep / para.Ntraj / para.kT,
+                "Ep", (sumnu_Ep + sumel_Ep) / para.Ntraj / para.kT,
+                "Etot", (sumEk + sumnu_Ep + sumel_Ep) / para.Ntraj / para.kT
+                */
+                );
+        h5f.create_attr("para", 
+                "MPI_size", MPIer::size,
+                "hop_count", hop_count,
+                "start_time", START_TIME,
+                "end_time", timer::now(),
+                "elapsed_time", timer::toc()
+                );
+        h5f.close();
     }
 
     MPIer::finalize();

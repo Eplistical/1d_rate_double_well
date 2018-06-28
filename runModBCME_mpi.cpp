@@ -98,24 +98,27 @@ int main(int argc, char** argv)
 
     // output
     if (MPIer::master) {
-        string outfile_fullpath = para.workdir + "/modbcme_mpi.out";
-        ioer::info("outfile: ", outfile_fullpath);
-        ioer::output_t out(outfile_fullpath);
-        out.set_precision(10);
-        out.set_width(20);
-        out.info("# ", START_TIME);
-
-        out.tabout("# t", "N", "Ek/kT");
-        for (int i(0); i < Nrecord; ++i) {
-            out.tabout( i * para.Anastep * para.dt, 
-                    1.0 - sumN[i] / para.Ntraj,
-                    sumEk[i] / para.Ntraj / para.kT
-                    );
+        vector<double> tarr(Nrecord, 0.0);
+        for (int irecord(0); irecord < Nrecord; ++irecord) {
+            tarr[irecord] = irecord * para.Anastep * para.dt; 
         }
-        out.info("# MPI_size: ", MPIer::size);
-        out.info("# ", timer::toc());
-        out.info("# ", timer::now());
-        out.close();
+
+        string outfile_fullpath = para.workdir + "/modbcme_mpi.h5";
+        ioer::info("outfile: ", outfile_fullpath);
+        ioer::h5file_t h5f(outfile_fullpath, std::ios::out);
+        saveParatoh5(h5f);
+        h5f.create_dataset(
+                "t", tarr,
+                "N0", 1.0 - sumN / para.Ntraj,
+                "Ek", sumEk / para.Ntraj / para.kT
+                );
+        h5f.create_attr("para", 
+                "MPI_size", MPIer::size,
+                "start_time", START_TIME,
+                "end_time", timer::now(),
+                "elapsed_time", timer::toc()
+                );
+        h5f.close();
     }
 
     MPIer::finalize();
