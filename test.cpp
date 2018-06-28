@@ -15,6 +15,8 @@
 #include "loadinit.hpp"
 #include "particle_1d/cme_particle_1d.hpp"
 
+#include "boost/program_options.hpp"
+
 using ptcl_t = CME_Particle_1D<potential_t>;
 using std::string;
 using std::vector;

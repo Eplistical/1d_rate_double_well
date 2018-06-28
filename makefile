@@ -1,6 +1,11 @@
 CXX = icpc
 INC += -I./dynamics_headers
-OPT += -O3
+OPT += -O3 -std=c++11
+
+# Boost
+BOOSTHOME = /usr/local
+INC += -L$(BOOSTHOME)/include
+LIBS += -L$(BOOSTHOME)/lib64 -lboost_program_options
 
 # HDF5
 HDF5HOME = /usr/local
@@ -43,7 +48,7 @@ bfp: runBFP.cpp config.hpp
 iesh: runIESH.cpp config.hpp
 	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
 
-showsurf: gshowsurf.cpp config.hpp
+showsurf: showsurf.cpp config.hpp
 	$(CXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
 
 
@@ -65,5 +70,5 @@ bfp_mpi: runBFP_mpi.cpp config.hpp
 iesh_mpi: runIESH_mpi.cpp config.hpp
 	$(MPICXX) $< $(INC) $(MPIINC) $(LIBS) $(MPILIBS) $(OPT) -o bin/$@
 
-test: gtest.cpp 
+test: test.cpp 
 	$(MPICXX) $< $(INC) $(MPIINC) $(LIBS) $(MPILIBS) $(OPT) -o bin/$@

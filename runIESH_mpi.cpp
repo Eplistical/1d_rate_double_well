@@ -3,6 +3,7 @@
 #include <memory>
 #include <algorithm>
 #include <string>
+#include <stdlib>
 
 #include "misc/vector.hpp"
 #include "misc/ioer.hpp"
@@ -115,11 +116,10 @@ int main(int argc, char** argv)
         out.set_width(20);
         out.info("# ", START_TIME);
 
-        out.tabout("# t", "N0", "x", "v", "Ek/kT", "nu_Ep/kT", "el_Ep/kT", "Ep/kT", "Etot/kT");
+        out.tabout("# t", "1 - N0", "x", "v", "Ek/kT", "nu_Ep/kT", "el_Ep/kT", "Ep/kT", "Etot/kT");
         for (int i(0); i < Nrecord; ++i) {
             out.tabout( i * para.Anastep * para.dt, 
-                    //1.0 - sumN[i] / para.Ntraj,
-                    sumN[i] / para.Ntraj,
+                    1.0 - sumN[i] / para.Ntraj,
                     sumx[i] / para.Ntraj,
                     sumv[i] / para.Ntraj,
                     sumEk[i] / para.Ntraj / para.kT,
