@@ -8,32 +8,36 @@
 #include <string>
 
 struct Para {
-    const double gamma0 = 6.4e-3;
     const double omega = 2.0e-4;
     const double mass = 2000.0;
     const double g = 20.6097;
     const double kT = 9.500432590749929e-4;
     const double dG = -0.0038;
-    const double nuclear_fric = 0.0;
-
-    const int Nbath = 50; 
-    const double bandwidth = 6.4e-2;
-    const double thermal_tau = -1.0;
-
-    const double dt = 1.0;
-    const int Ndtq = 1;
-    const size_t Nstep = 1e4;
-    const size_t Anastep = 200;
-    const int Ntraj = 100;
-
     const double mw2 = mass * omega * omega;
+
+    const int surf0 = 0;
     const int random_seed = 22906779;
 
-    const double kT0 = 5.0 * kT;
-    const double avgx0 = 0;
-    const int surf0 = 0;
+    // can be modified by arguments
+    double gamma0 = 1.0e-4;
+    double nuclear_fric = 0.8;
+    double bandwidth = 10 * gamma0;
 
-    std::string workdir;
+    int Nbath = 50; 
+    double thermal_tau = -1.0;
+
+    int Ntraj = 1000;
+    double dt = 10.0;
+    int Ndtq = 10;
+    size_t Nstep = 12e4;
+    size_t Anastep = 200;
+
+    double kT0 = 1 * kT;
+    double avgx0 = 0;
+
+    std::string initfile;
+    std::string inttablefile;
+    std::string outfile;
 } para;
 
 inline void saveParatoh5(ioer::h5file_t& h5f) {

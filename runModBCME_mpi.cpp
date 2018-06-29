@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <cassert>
 #include <memory>
 #include <algorithm>
 #include <string>
@@ -25,7 +26,7 @@ int main(int argc, char** argv)
     MPIer::setup();
 
     // parse args
-    if (argparse(MPIer::master, argc, argv, para.workdir) == false) {
+    if (argparse(MPIer::master, argc, argv) == false) {
         MPIer::finalize();
         return 0;
     }
@@ -38,7 +39,8 @@ int main(int argc, char** argv)
     }
     randomer::seed(MPIer::assign_random_seed(para.random_seed));
     potential_t potential(para.mass, para.omega, para.g, para.dG, para.gamma0);
-    inttable_mgr_t inttable_mgr("inttable.hdf5", potential);
+    assert(not para.inttablefile.empty());
+    inttable_mgr_t inttable_mgr(para.inttablefile, potential);
     for (int r(0); r < MPIer::size; ++r) {
         if (MPIer::rank == r) {
             inttable_mgr.load_inttable();
@@ -103,9 +105,9 @@ int main(int argc, char** argv)
             tarr[irecord] = irecord * para.Anastep * para.dt; 
         }
 
-        string outfile_fullpath = para.workdir + "/modbcme_mpi.h5";
-        ioer::info("outfile: ", outfile_fullpath);
-        ioer::h5file_t h5f(outfile_fullpath, std::ios::out);
+        
+        
+        ioer::h5file_t h5f(para.outfile, std::ios::out);
         saveParatoh5(h5f);
         h5f.create_dataset(
                 "t", tarr,

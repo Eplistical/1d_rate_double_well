@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <cassert>
 #include <memory>
 #include <algorithm>
 #include <string>
@@ -24,7 +25,7 @@ int main(int argc, char** argv)
     MPIer::setup();
 
     // parse args
-    if (argparse(MPIer::master, argc, argv, para.workdir) == false) {
+    if (argparse(MPIer::master, argc, argv) == false) {
         MPIer::finalize(); 
         return 0;
     }
@@ -93,9 +94,9 @@ int main(int argc, char** argv)
             tarr[irecord] = irecord * para.Anastep * para.dt; 
         }
 
-        string outfile_fullpath = para.workdir + "/fp_mpi.h5";
-        ioer::info("outfile: ", outfile_fullpath);
-        ioer::h5file_t h5f(outfile_fullpath, std::ios::out);
+        
+        
+        ioer::h5file_t h5f(para.outfile, std::ios::out);
         saveParatoh5(h5f);
         h5f.create_dataset(
                 "t", tarr,

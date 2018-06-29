@@ -1,5 +1,6 @@
 #include <cassert>
 #include <cmath>
+#include <cassert>
 #include <memory>
 #include <algorithm>
 #include <string>

@@ -10,7 +10,7 @@ np.seterr(over='ignore')
 with open('config.hpp', 'r') as f:
     txt = f.read()
     kT = float(re.findall('const double kT = (.*);', txt)[0])
-    gamma0 = float(re.findall('const double gamma0 = (.*);', txt)[0])
+    gamma0 = float(re.findall('double gamma0 = (.*);', txt)[0])
 
 W = 1.0
 hmin, hmax = -0.5, 0.5
@@ -18,7 +18,7 @@ Nh = int(10000)
 harr, dh = np.linspace(hmin, hmax, Nh, retstep=True)
 
 outdir = '.'
-outfile = outdir + '/' + 'inttable.hdf5'
+outfile = outdir + '/' + 'inttable.h5'
 
 def A(e, h):
     return gamma0 / ((e - h)**2 + gamma0**2 / 4)
@@ -45,6 +45,7 @@ def quadint():
         A2dfde_arr[i] = integrate.quad(A2dfde_integrand, -np.inf, np.inf, args=(h, ))[0]
     return Af_arr, A2dfde_arr
 
+
 def naiveint():
     """calc integrals by summation"""
     Af_arr = np.zeros(harr.size, dtype=np.float64)
@@ -66,6 +67,7 @@ if __name__ == '__main__':
 
     # calculate integral
     Af_arr, A2dfde_arr = naiveint()
+    #Af_arr, A2dfde_arr = quadint()
 
     f = h5py.File(outfile, 'w')
     # parameters

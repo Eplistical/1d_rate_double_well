@@ -15,11 +15,11 @@ inline void loadinit(std::vector<double>& x, std::vector<double>& v)
     v = randomer::vnormal(para.Ntraj, 0.0, sqrt(para.kT0 / para.mass));
     */
 
-    std::string initfile("./5kT100traj.dat");
+    assert(not para.initfile.empty());
     std::vector<double> xv(para.Ntraj * 2);
     x.resize(para.Ntraj);
     v.resize(para.Ntraj);
-    ioer::input_t init(initfile, std::ios::in | std::ios::binary);
+    ioer::input_t init(para.initfile, std::ios::in | std::ios::binary);
     int Ntraj_read;
     init.read(Ntraj_read);
     assert(Ntraj_read == para.Ntraj);
