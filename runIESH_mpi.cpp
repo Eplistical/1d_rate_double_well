@@ -1,4 +1,3 @@
-#include <cassert>
 #include <cmath>
 #include <cassert>
 #include <memory>
@@ -32,6 +31,7 @@ int main(int argc, char** argv)
         MPIer::finalize(); 
         return 0;
     }
+    assert(not para.outfile.empty());
 
     // setup
     string START_TIME;

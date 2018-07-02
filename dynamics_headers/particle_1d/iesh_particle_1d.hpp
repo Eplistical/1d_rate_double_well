@@ -36,7 +36,7 @@ namespace {
 					nuclear_fric(NUCLEAR_FRIC),
 					Nele(NELE), Nhole(NHOLE),
 					Ndtq(NDTQ), 
-                    thermal_tau(THERMAL_TAU), thermal_tau_inv(1.0 / thermal_tau),
+                    thermal_tau(THERMAL_TAU), thermal_tau_inv(1.0 / THERMAL_TAU),
 					hamiltonian(HAMILTONIAN)
 					{
 						Norb = Nele + Nhole;
@@ -150,7 +150,8 @@ namespace {
 						psi = psi + (k1 + 2.0 * k2 + 2.0 * k3 + k4) / 6.0;
 						// hopping
 						if (not hopped) {
-							hopped = hopper(dtq); 
+							//hopped = hopper(dtq); 
+							hopper(dtq); 
 						}
 						// el_thermal
 						if (thermal_tau > 0) {
@@ -195,14 +196,13 @@ namespace {
 						}
 					}
 
-                    // for case where Phop is too large 
+                    // if Phop is too large 
                     int Nattempt(1);
-                    if (Phop > 0.1) {
+                    if (Phop > 1.0) {
                         Nattempt = static_cast<int>(Phop / 0.1) + 1;
                     }
                     probability = probability / Nattempt;
                     Phop = Phop / Nattempt;
-					//assert(Phop <= 1);
                     
 					// append non-hop probability
 					probability[count] = 1.0 - Phop; 
@@ -211,7 +211,7 @@ namespace {
 
 					// random number
                     for (int iattempt(0); iattempt < Nattempt; ++iattempt) {
-                        const int attempt_hop(randomer::discrete(probability));
+                        const int attempt_hop(randomer::discrete(probability.begin(), probability.begin() + count + 1));
                         if (attempt_hop != count) {
                             const int attempt_from_idx(from_to_indices[attempt_hop * 2]);
                             const int attempt_to_idx(from_to_indices[1 + attempt_hop * 2]);

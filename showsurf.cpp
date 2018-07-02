@@ -21,6 +21,7 @@ int main(int argc, char** argv)
     if (argparse(true, argc, argv) == false) {
         return 0;
     }
+    assert(not para.outfile.empty());
 
     const int Nele(static_cast<int>(para.Nbath / 2));
     const int Nhole(Nele + 1);

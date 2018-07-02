@@ -19,18 +19,18 @@ struct Para {
     const int random_seed = 22906779;
 
     // can be modified by arguments
-    double gamma0 = 1.0e-4;
+    double gamma0 = 6.4e-3;
     double nuclear_fric = 0.8;
     double bandwidth = 10 * gamma0;
 
     int Nbath = 50; 
     double thermal_tau = -1.0;
 
-    int Ntraj = 1000;
+    int Ntraj = 10;
     double dt = 10.0;
     int Ndtq = 10;
-    size_t Nstep = 12e4;
-    size_t Anastep = 200;
+    size_t Nstep = 1000;
+    size_t Anastep = 1;
 
     double kT0 = 1 * kT;
     double avgx0 = 0;

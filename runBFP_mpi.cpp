@@ -30,6 +30,7 @@ int main(int argc, char** argv)
         MPIer::finalize(); 
         return 0;
     }
+    assert(not para.outfile.empty());
 
     // setup
     string START_TIME;

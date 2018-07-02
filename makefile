@@ -51,3 +51,6 @@ test: test.cpp
 
 showsurf: showsurf.cpp config.hpp
 	$(MPICXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@
+
+exact_eql_pop: exact_eql_pop.cpp config.hpp
+	$(MPICXX) $< $(INC) $(LIBS) $(OPT) -o bin/$@

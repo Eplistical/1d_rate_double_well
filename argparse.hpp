@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <cassert>
 #include "boost/program_options.hpp"
 #include "config.hpp"
 
@@ -47,8 +46,6 @@ inline bool argparse(bool output_flag, int argc, char** argv)
     if (vm.count("kT0")) {
         para.kT0 *= para.kT;
     }
-
-    assert(vm.count("outfile"));
 
     return true;
 }
