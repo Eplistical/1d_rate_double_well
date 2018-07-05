@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 
     const double xmin(-100.0);
     const double xmax(100.0);
-    const int N(200000);
+    const int N(100000);
     const double dx((xmax - xmin) / N);
 
     double Uadiab(potential.cal_potential(xmin, 0));

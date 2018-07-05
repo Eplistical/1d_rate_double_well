@@ -14,7 +14,7 @@ with open('config.hpp', 'r') as f:
 
 W = 1.0
 hmin, hmax = -0.5, 0.5
-Nh = int(10000)
+Nh = int(100000)
 harr, dh = np.linspace(hmin, hmax, Nh, retstep=True)
 
 outdir = '.'
@@ -66,8 +66,8 @@ if __name__ == '__main__':
     start_t = dt.now()
 
     # calculate integral
-    Af_arr, A2dfde_arr = naiveint()
-    #Af_arr, A2dfde_arr = quadint()
+    #Af_arr, A2dfde_arr = naiveint()
+    Af_arr, A2dfde_arr = quadint()
 
     f = h5py.File(outfile, 'w')
     # parameters
