@@ -3,22 +3,32 @@ import re
 from datetime import datetime as dt
 import numpy as np
 import scipy.integrate as integrate
+import argparse
 import h5py
 
 np.seterr(over='ignore')
 
-with open('config.hpp', 'r') as f:
-    txt = f.read()
-    kT = float(re.findall('const double kT = (.*);', txt)[0])
-    gamma0 = float(re.findall('double gamma0 = (.*);', txt)[0])
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--gamma0', required=True, type=float, help='coupling')
+    parser.add_argument('--kT', required=True, type=float, help='temperature')
+    parser.add_argument('--W', type=float, default=1.0, help='bandwidth, the band is defined as [-W, W]')
+    parser.add_argument('--hmax', type=float, default=0.5, help='max h(x) to integrate')
+    parser.add_argument('--hmin', type=float, default=-0.5, help='hmin h(x) to integrate')
+    parser.add_argument('--Nh', type=int, default=10000, help='number of h to process')
+    parser.add_argument('--integrator', type=str, default="quad", help='integrator to use, quad or naive')
+    parser.add_argument('--outfile', type=str, default="inttable.h5", help='output hdf5 file')
+    return parser.parse_args()
 
-W = 1.0
-hmin, hmax = -0.5, 0.5
-Nh = int(100000)
+
+args = parse_args()
+W = args.W
+hmin, hmax = args.hmin, args.hmax
+Nh = args.Nh
 harr, dh = np.linspace(hmin, hmax, Nh, retstep=True)
-
-outdir = '.'
-outfile = outdir + '/' + 'inttable.h5'
+outfile = args.outfile
+gamma0 = args.gamma0
+kT = args.kT
 
 def A(e, h):
     return gamma0 / ((e - h)**2 + gamma0**2 / 4)
@@ -60,14 +70,16 @@ def naiveint():
 
 
 if __name__ == '__main__':
-    logf = open('.Af_int.log', 'w+')
-    print('#  kT = ', kT, file=logf)
-    print('#  gamma0 = ', gamma0, file=logf)
+    print(args)
     start_t = dt.now()
 
     # calculate integral
-    #Af_arr, A2dfde_arr = naiveint()
-    Af_arr, A2dfde_arr = quadint()
+    if args.integrator == 'quad':
+        Af_arr, A2dfde_arr = quadint()
+    elif args.integrator == 'naive':
+        Af_arr, A2dfde_arr = naiveint()
+    else:
+        raise ValueError("invaild integrator type")
 
     f = h5py.File(outfile, 'w')
     # parameters
@@ -80,7 +92,7 @@ if __name__ == '__main__':
     f.close()
 
     for h, x, y in zip(harr, Af_arr, A2dfde_arr):
-        print(('%18.6f' * 3) % (h, x, y), file=logf)
+        print(('%18.6f' * 3) % (h, x, y))
 
     end_t = dt.now()
-    print("# time elasped: " + str(end_t - start_t), file=logf)
+    print("# time elasped: " + str(end_t - start_t))
