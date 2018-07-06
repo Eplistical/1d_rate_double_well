@@ -28,6 +28,8 @@ cd 1d_rate_double_well
 
 mkdir build
 
+cd build
+
 cmake ..
 
 make 
