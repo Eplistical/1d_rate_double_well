@@ -39,5 +39,5 @@ make
 ```
 cd 1d_rate_double_well/build
 
-./bin/iesh_mpi --help
+./bin/<exe> --help
 ```
