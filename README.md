@@ -12,7 +12,7 @@
 **prerequisite**
 
 - [cmake](https://cmake.org/)
-- MPI
+- [MPI](https://www.open-mpi.org/)
 - [Intel MKL](https://software.intel.com/en-us/mkl)
 - [HDF5](https://support.hdfgroup.org/HDF5/)
 - [Boost](https://www.boost.org/)
