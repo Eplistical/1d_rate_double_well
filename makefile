@@ -3,7 +3,7 @@ OPT += -O3 -std=c++11
 
 # Boost
 BOOSTHOME = /usr/local
-INC += -L$(BOOSTHOME)/include
+INC += -I$(BOOSTHOME)/include
 LIBS += -L$(BOOSTHOME)/lib64 -lboost_program_options
 
 # HDF5
