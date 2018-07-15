@@ -25,6 +25,7 @@ struct Para {
 
     int Nbath = 50; 
     double thermal_tau = -1.0;
+    size_t Nbath_relax_step = 0;
 
     int Ntraj = 10;
     double dt = 10.0;
@@ -53,6 +54,7 @@ inline void saveParatoh5(ioer::h5file_t& h5f) {
             "Nbath", para.Nbath,
             "bandwidth", para.bandwidth,
             "thermal_tau", para.thermal_tau,
+            "Nbath_relax_step", para.Nbath_relax_step,
             "dt", para.dt,
             "Ndtq", para.Ndtq,
             "Nstep", para.Nstep,
