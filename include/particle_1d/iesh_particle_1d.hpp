@@ -30,16 +30,22 @@ namespace {
 			public:
 				IESH_Particle_1D(  double X, double V, double MASS, double KT, 
 						double NUCLEAR_FRIC, int NELE, int NHOLE,
-						double NDTQ, double THERMAL_TAU,
+						double NDTQ, double THERMAL_TAU, 
+                        size_t NBATH_RELAX_STEP,
 						const hamiltonian_t& HAMILTONIAN) noexcept :
                 	Particle_1D(X, V, MASS, KT),
 					nuclear_fric(NUCLEAR_FRIC),
 					Nele(NELE), Nhole(NHOLE),
 					Ndtq(NDTQ), 
                     thermal_tau(THERMAL_TAU), thermal_tau_inv(1.0 / THERMAL_TAU),
+                    Nbath_relax_step(NBATH_RELAX_STEP),
 					hamiltonian(HAMILTONIAN)
 					{
 						Norb = Nele + Nhole;
+
+						// init hamiltonian
+						hamiltonian.update_H(this->x);
+						hamiltonian.update_dc(this->x);
 
 						// init occ & uocc
 						occ_vec.clear();
@@ -50,9 +56,10 @@ namespace {
 							(i < Nele) ? occ_vec.push_back(i) : uocc_vec.push_back(i);
 						}
 
-						// init hamiltonian
-						hamiltonian.update_H(x);
-						hamiltonian.update_dc(x);
+                        // equilibrate electronic temp
+                        for (int i(0); i < Nbath_relax_step; ++i) {
+                            el_thermal();
+                        }
 
 						// init psi
 						psi.assign(Norb * Nele, matrixop::ZERO_z);
@@ -154,8 +161,8 @@ namespace {
 							hopper(dtq); 
 						}
 						// el_thermal
-						if (thermal_tau > 0) {
-							el_thermal(dtq);
+						if (thermal_tau > 0 and randomer::rand() < dt * thermal_tau_inv) {
+							el_thermal();
 						}
 					}
 				}
@@ -232,20 +239,19 @@ namespace {
                     return false;
 				}
 
-                void el_thermal(double dt)
+                void el_thermal()
                 {
-                    if (randomer::rand() < dt * thermal_tau_inv) {
-                        const int i(randomer::choice(occ_vec));
-                        const int a(randomer::choice(uocc_vec));
-                        const double Ea(hamiltonian.eva.at(a));
-                        const double Ei(hamiltonian.eva.at(i));
+                    const int i(randomer::choice(occ_vec));
+                    const int a(randomer::choice(uocc_vec));
+                    const double Ea(hamiltonian.eva.at(a));
+                    const double Ei(hamiltonian.eva.at(i));
 
-                        if ((Ei >= Ea) or randomer::rand() < exp(-this->kT_inv * (Ea - Ei))) {
-                            replace(occ_vec.begin(), occ_vec.end(), i, a);
-                            replace(uocc_vec.begin(), uocc_vec.end(), a, i);
-                        }
+                    if ((Ei >= Ea) or randomer::rand() < exp(-this->kT_inv * (Ea - Ei))) {
+                        replace(occ_vec.begin(), occ_vec.end(), i, a);
+                        replace(uocc_vec.begin(), uocc_vec.end(), a, i);
                     }
                 }
+
 
 			public:
 				int Norb, Nele, Nhole;
@@ -255,6 +261,7 @@ namespace {
 				double nuclear_fric;
 				int Ndtq;
                 const double thermal_tau, thermal_tau_inv;
+                const size_t Nbath_relax_step;
                 uint64_t hop_count;
 		};
 

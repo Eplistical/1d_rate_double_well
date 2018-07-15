@@ -69,7 +69,7 @@ int main(int argc, char** argv)
     uint64_t hop_count(0);
     for (int ijob(0); ijob < Njob; ++ijob) {
         int j(mybatch[ijob]);
-        ptcl_t ptcl(x[j], v[j], para.mass, para.kT, para.nuclear_fric, Nele, Nhole, para.Ndtq, para.thermal_tau, hamiltonian);
+        ptcl_t ptcl(x[j], v[j], para.mass, para.kT, para.nuclear_fric, Nele, Nhole, para.Ndtq, para.thermal_tau, para.Nbath_relax_step, hamiltonian);
         for (size_t istep(0); istep < para.Nstep; ++istep) {
             if (istep % para.Anastep == 0) {
                 const int irecord(istep / para.Anastep);
